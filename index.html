@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>D0M1NAT0R</title>
+
+  <!-- Основные стили страницы + переменные для тем -->
+  <style>
+    body {
+      font-family: monospace;
+      background: #000;
+      margin: 0;
+      padding: 20px 10px;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #33FF99; /* запасной цвет текста */
+    }
+
+    h1 {
+      margin: 10px 0 25px;
+      font-size: 2.4rem;
+      text-shadow: 0 0 14px currentColor;
+    }
+
+    /* Переменные цветов и свечения для каждой темы */
+    .theme-keller   { --accent: #8AA3F4; --accent-glow: #8AA3F466; }
+    .theme-blazer   { --accent: #E63E3E; --accent-glow: #E63E3E66; }
+    .theme-terron   { --accent: #44FF4E; --accent-glow: #44FF4E66; }
+
+    /* Утилитарные классы для применения акцентного цвета */
+    .accent-text    { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+    .accent-border  { border-color: var(--accent); }
+    .accent-bg      { background: var(--accent); color: #000; }
+    .accent-glow    { box-shadow: 0 0 16px var(--accent-glow); }
+
+    /* Верхняя иконка (symbol) */
+    .top-symbol {
+      margin-bottom: 15px;
+      opacity: 0;
+      animation: fadeIn 1.2s forwards;
+    }
+
+    .top-symbol img {
+      height: 54px;
+      width: auto;
+      image-rendering: crisp-edges;
+      filter: drop-shadow(0 0 8px var(--accent));
+    }
+
+    /* Контейнер для основного контента */
+    .content-wrapper {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* Строки с полями ввода/вывода и боковыми картинками */
+    .input-row,
+    .output-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .side-img {
+      opacity: 0;
+      animation: fadeIn 1.4s forwards;
+      width: 100%;
+      max-width: 220px;
+      flex-shrink: 0;
+    }
+
+    .side-img.face {
+      order: 2;               /* справа от поля ввода */
+      animation-delay: 0.3s;
+      max-width: 190px;
+      margin-left: 35px;      /* небольшой отступ вправо */
+    }
+
+    .side-img.ship {
+      order: 1;               /* слева от поля вывода */
+      animation-delay: 0.2s;
+      margin-left: 15px;
+    }
+
+    .side-img img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      image-rendering: crisp-edges;
+      filter: drop-shadow(0 0 10px var(--accent-glow));
+    }
+
+    .main-textarea {
+      flex: 1;
+      min-width: 420px;
+      max-width: 620px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 220px;
+      background: #0a0a0a;
+      color: var(--accent);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 19px;
+      resize: vertical;
+      box-shadow: inset 0 0 12px var(--accent-glow);
+      opacity: 0;
+      animation: fadeIn 1.6s forwards 0.4s;
+    }
+
+    textarea:focus {
+      outline: none;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .buttons {
+      margin: 20px 0;
+      opacity: 0;
+      animation: fadeIn 1.2s forwards 0.6s;
+    }
+
+    button {
+      background: var(--accent);
+      color: #000;
+      padding: 14px 40px;
+      margin: 0 12px;
+      font-weight: bold;
+      font-size: 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+
+    button:hover {
+      filter: brightness(1.15);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px var(--accent-glow);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: 0 3px 10px var(--accent-glow);
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Адаптив для мобильных устройств */
+    @media (max-width: 860px) {
+      .input-row,
+      .output-row {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .side-img {
+        max-width: 200px;
+        margin: 0 auto !important;
+      }
+      .side-img.face,
+      .side-img.ship {
+        order: unset;
+        margin-left: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body class="theme-terron">
+
+  <!-- Верхняя иконка (symbol) -->
+  <div class="top-symbol">
+    <img id="symbolImg" src="" alt="symbol">
+  </div>
+
+  <h1 class="accent-text">D0M1NAT0R</h1>
+
+  <div class="content-wrapper">
+
+    <!-- Строка: поле ввода + лицо справа -->
+    <div class="input-row">
+      <div class="main-textarea">
+        <textarea id="input" placeholder="Введи текст (русский или зашифрованный)..."></textarea>
+      </div>
+      <div class="side-img face">
+        <img id="faceImg" src="" alt="face">
+      </div>
+    </div>
+
+    <!-- Кнопки шифрования / расшифровки -->
+    <div class="buttons">
+      <button class="accent-bg" onclick="doEncrypt()">ЗАШИФРОВАТЬ →</button>
+      <button class="accent-bg" onclick="doDecrypt()">← РАСШИФРОВАТЬ</button>
+    </div>
+
+    <!-- Строка: корабль слева + поле вывода -->
+    <div class="output-row">
+      <div class="side-img ship">
+        <img id="shipImg" src="" alt="ship">
+      </div>
+      <div class="main-textarea">
+        <textarea id="output" placeholder="Результат появится здесь..."></textarea>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+// ──────────────────────────────────────────────
+// 1. Темы — цвета и картинки
+// ──────────────────────────────────────────────
+const themes = [
+  {
+    name: "keller",
+    color: "#8AA3F4",
+    symbol: "https://i.postimg.cc/SsSFQSbb/symbol-Keller.webp",
+    face:   "https://i.postimg.cc/XYYC5FKz/face-Keller.webp",
+    ship:   "https://i.postimg.cc/cJMGNK2x/ship_Keller.webp"
+  },
+  {
+    name: "blazer",
+    color: "#E63E3E",
+    symbol: "https://i.postimg.cc/5ymDZDRk/symbol_Blazer.webp",
+    face:   "https://i.postimg.cc/rs97v7PZ/face_Blazer.webp",
+    ship:   "https://i.postimg.cc/HntFfFhb/ship_Blazer.webp"
+  },
+  {
+    name: "terron",
+    color: "#44FF4E",
+    symbol: "https://i.postimg.cc/pXbNyJH3/symbol_Terron.webp",
+    face:   "https://i.postimg.cc/65JsTfX1/face_Terron.webp",
+    ship:   "https://i.postimg.cc/4NkCnQgr/ship_Terron.webp"
+  }
+];
+
+// Выбор случайной темы при загрузке страницы
+const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+const currentTheme = randomTheme.name;
+
+document.body.className = `theme-${currentTheme}`;
+document.getElementById("symbolImg").src = randomTheme.symbol;
+document.getElementById("faceImg").src   = randomTheme.face;
+document.getElementById("shipImg").src   = randomTheme.ship;
+
+
+// ──────────────────────────────────────────────
+// 2. Таблица замен для шифрования и обратная для расшифровки
+// ──────────────────────────────────────────────
+const map = {
+  'А': ['A', '2', '@'], 'Б': ['B', '6', '₿'], 'В': ['V', '√'], 'Г': ['G'],
+  'Д': ['D'], 'Е': ['E', '9'], 'Ё': ['E', '9'], 'Ж': ['#'], 'З': ['Z'],
+  'И': ['I', '1'], 'Й': ['J'], 'К': ['K'], 'Л': ['L', '£'],
+  'М': ['M', '8', '&'], 'Н': ['N'], 'О': ['O', '0', '°'], 'П': ['P'],
+  'Р': ['R', '₽'], 'С': ['S', '$', '7'], 'Т': ['T'], 'У': ['U', 'Y', '¥'],
+  'Ф': ['F', '§'], 'Х': ['H', 'X'], 'Ц': ['C', '¢'], 'Ч': ['4'],
+  'Ш': ['W'], 'Щ': ['Щ'], 'Ъ': ['"'], 'Ы': ['Ы'], 'Ь': ["'"],
+  'Э': ['3', '€'], 'Ю': ['Ю'], 'Я': ['Я', '!']
+};
+
+const reverseMap = {};
+for (const letter in map) {
+  map[letter].forEach(v => { if (!reverseMap[v]) reverseMap[v] = letter; });
+}
+reverseMap['E'] = 'Е';
+reverseMap['9'] = 'Е';
+
+
+// ──────────────────────────────────────────────
+// 3. Пасхалки — специальные сообщения при вводе ключевых слов
+// ──────────────────────────────────────────────
+const easterEggs = {
+  keller: [
+    { keys: ["келлер", "keller"], message: "Связь с Командным центром невозможна, объект находится в гиперпространстве." },
+    { keys: ["махпелла", "mahpella", "mahпелла", "mahpelла"], message: "информация получена, маршрут в соседний рукав галактики откалиброван, активирован протокол сбора информации." }
+  ],
+  blazer: [
+    { keys: ["блазер", "blazer"], message: "Сигнал отправлен. Ожидайте прибытия флота ликвидации." }
+  ],
+  terron: [
+    { keys: ["террон", "terron"], message: "Запрос на ассимиляцию обрабатывается, ожидайте ответного протокола." }
+  ]
+};
+
+
+// ──────────────────────────────────────────────
+// 4. Функция шифрования
+// ──────────────────────────────────────────────
+function doEncrypt() {
+  const input = document.getElementById('input').value;
+  if (!input) return;
+
+  const tokens = input.split(/(\s+)/);
+  const processed = tokens.map(token => {
+    if (/^\s+$/.test(token)) return token;
+
+    let word = token.toUpperCase();
+    let punct = '';
+
+    const match = word.match(/([!?.:,;]+)$/);
+    if (match) {
+      punct = '*';
+      word = word.slice(0, -match[0].length);
+    }
+
+    if (!/[А-ЯЁ]/.test(word)) return token;
+
+    let encoded = '';
+    for (let i = 0; i < word.length; i++) {
+      const char = word[i];
+      const variants = map[char] || [char];
+      encoded += variants[i % variants.length];
+    }
+
+    encoded = encoded.split('').reverse().join('');
+    return encoded + punct;
+  });
+
+  const result = processed.join('');
+  document.getElementById('output').value = 'DOM-' + result + '-INTRUDER';
+}
+
+
+// ──────────────────────────────────────────────
+// 5. Функция расшифровки + обработка пасхалок и ошибок
+// ──────────────────────────────────────────────
+function doDecrypt() {
+  const input = document.getElementById('input').value.trim();
+  const lowerInput = input.toLowerCase();
+
+  // Сначала проверяем пасхалки для текущей темы
+  const themeEggs = easterEggs[currentTheme] || [];
+  for (const egg of themeEggs) {
+    for (const key of egg.keys) {
+      if (lowerInput === key || lowerInput.includes(key)) {
+        document.getElementById('output').value = egg.message;
+        return;
+      }
+    }
+  }
+
+  // Если не пасхалка — обычная расшифровка
+  if (!input.startsWith('DOM-') || !input.endsWith('-INTRUDER')) {
+    document.getElementById('output').value = "Неверное шифрование. Пожалуйста, установите или обновите программу Интеркома";
+    return;
+  }
+
+  let cleaned = input.slice(4, input.length - '-INTRUDER'.length);
+
+  const tokens = cleaned.split(/(\s+)/);
+  const processed = tokens.map(token => {
+    if (/^\s+$/.test(token)) return token;
+
+    let encWord = token;
+    let punct = '';
+
+    if (token.endsWith('*')) {
+      punct = '.';
+      encWord = token.slice(0, -1);
+    }
+
+    const originalOrder = encWord.split('').reverse().join('');
+    let decoded = '';
+    for (let char of originalOrder) {
+      decoded += reverseMap[char] || char;
+    }
+
+    return decoded + punct;
+  });
+
+  document.getElementById('output').value = processed.join('');
+}
+</script>
+
+</body>
+</html>
