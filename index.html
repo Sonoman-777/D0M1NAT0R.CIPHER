@@ -4,184 +4,187 @@
   <meta charset="UTF-8">
   <title>D0M1NAT0R</title>
 
-  <!-- Основные стили страницы + переменные для тем -->
-  <style>
-    body {
-      font-family: monospace;
-      background: #000;
-      margin: 0;
-      padding: 20px 10px;
-      text-align: center;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #33FF99; /* запасной цвет текста */
-    }
+<style>
+  * {
+    box-sizing: border-box;
+  }
 
-    h1 {
-      margin: 10px 0 25px;
-      font-size: 2.4rem;
-      text-shadow: 0 0 14px currentColor;
-    }
+  body {
+    font-family: monospace;
+    background: #000;
+    margin: 0;
+    padding: 20px 10px;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #33FF99;
+  }
 
-    /* Переменные цветов и свечения для каждой темы */
-    .theme-keller   { --accent: #8AA3F4; --accent-glow: #8AA3F466; }
-    .theme-blazer   { --accent: #E63E3E; --accent-glow: #E63E3E66; }
-    .theme-terron   { --accent: #44FF4E; --accent-glow: #44FF4E66; }
+  h1 {
+    margin: 20px 0 30px;
+    font-size: 2.4rem;
+    text-shadow: 0 0 14px currentColor;
+  }
 
-    /* Утилитарные классы для применения акцентного цвета */
-    .accent-text    { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
-    .accent-border  { border-color: var(--accent); }
-    .accent-bg      { background: var(--accent); color: #000; }
-    .accent-glow    { box-shadow: 0 0 16px var(--accent-glow); }
+  .theme-keller   { 
+    --accent: #8AA3F4; 
+    --accent-glow: #8AA3F466; 
+    --dark-text: #2C4A8C;
+  }
+  .theme-blazer   { 
+    --accent: #E63E3E; 
+    --accent-glow: #E63E3E66; 
+    --dark-text: #8B1F1F;
+  }
+  .theme-terron   { 
+    --accent: #44FF4E; 
+    --accent-glow: #44FF4E66; 
+    --dark-text: #1E8A2E;
+  }
 
-    /* Верхняя иконка (symbol) */
-    .top-symbol {
-      margin-bottom: 15px;
-      opacity: 0;
-      animation: fadeIn 1.2s forwards;
-    }
+  .accent-text    { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+  .accent-glow    { box-shadow: 0 0 16px var(--accent-glow); }
 
-    .top-symbol img {
-      height: 54px;
-      width: auto;
-      image-rendering: crisp-edges;
-      filter: drop-shadow(0 0 8px var(--accent));
-    }
+  .top-symbol {
+    margin: 32px 0 10px;
+    opacity: 0;
+    animation: fadeIn 1.2s forwards;
+  }
 
-    /* Контейнер для основного контента */
-    .content-wrapper {
-      width: 100%;
-      max-width: 1000px;
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-    }
+  .top-symbol img {
+    height: 50px;
+    width: auto;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 0 8px var(--accent));
+  }
 
-    /* Строки с полями ввода/вывода и боковыми картинками */
-    .input-row,
-    .output-row {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
+  .content-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+  }
 
-    .side-img {
-      opacity: 0;
-      animation: fadeIn 1.4s forwards;
-      width: 100%;
-      max-width: 220px;
-      flex-shrink: 0;
-    }
+  .input-field {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+  }
 
-    .side-img.face {
-      order: 2;               /* справа от поля ввода */
-      animation-delay: 0.3s;
-      max-width: 190px;
-      margin-left: 35px;      /* небольшой отступ вправо */
-    }
+  textarea,
+  .input-field input {
+    width: 100%;
+    background: #0a0a0a;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 18px;
+    box-shadow: inset 0 0 12px var(--accent-glow);
+  }
 
-    .side-img.ship {
-      order: 1;               /* слева от поля вывода */
-      animation-delay: 0.2s;
-      margin-left: 15px;
-    }
+  textarea {
+    height: 180px;
+    resize: vertical;
+    opacity: 0;
+    animation: fadeIn 1.6s forwards 0.4s;
+  }
 
-    .side-img img {
-      width: 100%;
-      height: auto;
-      border-radius: 10px;
-      image-rendering: crisp-edges;
-      filter: drop-shadow(0 0 10px var(--accent-glow));
-    }
+  .input-field input {
+    opacity: 0;
+    animation: fadeIn 1.2s forwards 0.7s;
+  }
 
-    .main-textarea {
-      flex: 1;
-      min-width: 420px;
-      max-width: 620px;
-    }
+  textarea:focus,
+  .input-field input:focus {
+    outline: none;
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
 
-    textarea {
-      width: 100%;
-      height: 220px;
-      background: #0a0a0a;
-      color: var(--accent);
-      border: 2px solid var(--accent);
-      border-radius: 8px;
-      padding: 14px;
-      font-size: 19px;
-      resize: vertical;
-      box-shadow: inset 0 0 12px var(--accent-glow);
-      opacity: 0;
-      animation: fadeIn 1.6s forwards 0.4s;
-    }
+  .buttons, .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    opacity: 0;
+    animation: fadeIn 1.2s forwards;
+  }
 
-    textarea:focus {
-      outline: none;
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
+  .main-btn, .action-btn {
+    min-width: 220px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 
-    .buttons {
-      margin: 20px 0;
-      opacity: 0;
-      animation: fadeIn 1.2s forwards 0.6s;
-    }
+  .main-btn:hover, .action-btn:hover {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 0 16px var(--accent-glow);
+    transform: translateY(-1px);
+  }
 
-    button {
-      background: var(--accent);
-      color: #000;
-      padding: 14px 40px;
-      margin: 0 12px;
-      font-weight: bold;
-      font-size: 18px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-    }
+  .main-btn:active, .action-btn:active {
+    transform: translateY(1px);
+  }
 
-    button:hover {
-      filter: brightness(1.15);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px var(--accent-glow);
-    }
+  .examples-table {
+    width: 100%;
+    max-width: 1000px;
+    border-collapse: collapse;
+    margin-top: 70px;
+    opacity: 0;
+    animation: fadeIn 1.8s forwards 1s;
+  }
 
-    button:active {
-      transform: translateY(1px);
-      box-shadow: 0 3px 10px var(--accent-glow);
-    }
+  .examples-table th, .examples-table td {
+    border: 2px solid var(--accent);
+    padding: 32px 16px;
+    text-align: left;
+    font-size: 16px;
+    vertical-align: top;
+    word-break: break-word;
+  }
 
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
+  .examples-table th {
+    background: rgba(0,0,0,0.6);
+    color: var(--accent);
+    text-transform: uppercase;
+  }
 
-    /* Адаптив для мобильных устройств */
-    @media (max-width: 860px) {
-      .input-row,
-      .output-row {
-        flex-direction: column;
-        gap: 16px;
-      }
-      .side-img {
-        max-width: 200px;
-        margin: 0 auto !important;
-      }
-      .side-img.face,
-      .side-img.ship {
-        order: unset;
-        margin-left: 0 !important;
-      }
-    }
-  </style>
+  .examples-table td {
+    color: var(--dark-text);
+  }
+
+  .examples-table td.original {
+    background: #111;
+    font-weight: bold;
+    color: var(--dark-text);
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  @media (max-width: 900px) {
+    .buttons, .action-buttons { gap: 20px; flex-wrap: wrap; }
+    .main-btn, .action-btn { min-width: 180px; }
+  }
+</style>
 </head>
 <body class="theme-terron">
 
-  <!-- Верхняя иконка (symbol) -->
   <div class="top-symbol">
     <img id="symbolImg" src="" alt="symbol">
   </div>
@@ -190,76 +193,50 @@
 
   <div class="content-wrapper">
 
-    <!-- Строка: поле ввода + лицо справа -->
-    <div class="input-row">
-      <div class="main-textarea">
-        <textarea id="input" placeholder="Введи текст (русский или зашифрованный)..."></textarea>
-      </div>
-      <div class="side-img face">
-        <img id="faceImg" src="" alt="face">
-      </div>
-    </div>
+    <textarea id="input" placeholder="Введите текст (русский или зашифрованный)..."></textarea>
 
-    <!-- Кнопки шифрования / расшифровки -->
     <div class="buttons">
-      <button class="accent-bg" onclick="doEncrypt()">ЗАШИФРОВАТЬ →</button>
-      <button class="accent-bg" onclick="doDecrypt()">← РАСШИФРОВАТЬ</button>
+      <button class="main-btn" onclick="doEncrypt()">ЗАШИФРОВАТЬ</button>
+      <button class="main-btn" onclick="doDecrypt()">РАСШИФРОВАТЬ</button>
     </div>
 
-    <!-- Строка: корабль слева + поле вывода -->
-    <div class="output-row">
-      <div class="side-img ship">
-        <img id="shipImg" src="" alt="ship">
-      </div>
-      <div class="main-textarea">
-        <textarea id="output" placeholder="Результат появится здесь..."></textarea>
-      </div>
+    <div class="input-field">
+      <input id="cipherKey" type="text" placeholder="Введите ключ шифрования (до шести латинских букв)...">
     </div>
+
+    <textarea id="output" placeholder="Результат появится здесь..."></textarea>
+
+    <div class="action-buttons">
+      <button class="action-btn" onclick="copyOutput()">КОПИРОВАТЬ</button>
+      <button class="action-btn" onclick="reverseOperation()">ПЕРЕВЕРНУТЬ</button>
+    </div>
+
+    <table class="examples-table">
+      <thead>
+        <tr>
+          <th>Пример ключа</th>
+          <th>Пример шифрования текста</th>
+        </tr>
+      </thead>
+      <tbody id="examplesBody"></tbody>
+    </table>
 
   </div>
 
 <script>
-// ──────────────────────────────────────────────
-// 1. Темы — цвета и картинки
-// ──────────────────────────────────────────────
 const themes = [
-  {
-    name: "keller",
-    color: "#8AA3F4",
-    symbol: "https://i.postimg.cc/SsSFQSbb/symbol-Keller.webp",
-    face:   "https://i.postimg.cc/XYYC5FKz/face-Keller.webp",
-    ship:   "https://i.postimg.cc/cJMGNK2x/ship_Keller.webp"
-  },
-  {
-    name: "blazer",
-    color: "#E63E3E",
-    symbol: "https://i.postimg.cc/5ymDZDRk/symbol_Blazer.webp",
-    face:   "https://i.postimg.cc/rs97v7PZ/face_Blazer.webp",
-    ship:   "https://i.postimg.cc/HntFfFhb/ship_Blazer.webp"
-  },
-  {
-    name: "terron",
-    color: "#44FF4E",
-    symbol: "https://i.postimg.cc/pXbNyJH3/symbol_Terron.webp",
-    face:   "https://i.postimg.cc/65JsTfX1/face_Terron.webp",
-    ship:   "https://i.postimg.cc/4NkCnQgr/ship_Terron.webp"
-  }
+  { name: "keller", color: "#8AA3F4", symbol: "https://i.postimg.cc/SsSFQSbb/symbol-Keller.webp" },
+  { name: "blazer", color: "#E63E3E", symbol: "https://i.postimg.cc/5ymDZDRk/symbol_Blazer.webp" },
+  { name: "terron", color: "#44FF4E", symbol: "https://i.postimg.cc/pXbNyJH3/symbol_Terron.webp" }
 ];
 
-// Выбор случайной темы при загрузке страницы
 const randomTheme = themes[Math.floor(Math.random() * themes.length)];
 const currentTheme = randomTheme.name;
 
 document.body.className = `theme-${currentTheme}`;
 document.getElementById("symbolImg").src = randomTheme.symbol;
-document.getElementById("faceImg").src   = randomTheme.face;
-document.getElementById("shipImg").src   = randomTheme.ship;
 
-
-// ──────────────────────────────────────────────
-// 2. Таблица замен для шифрования и обратная для расшифровки
-// ──────────────────────────────────────────────
-const map = {
+const baseMap = {
   'А': ['A', '2', '@'], 'Б': ['B', '6', '₿'], 'В': ['V', '√'], 'Г': ['G'],
   'Д': ['D'], 'Е': ['E', '9'], 'Ё': ['E', '9'], 'Ж': ['#'], 'З': ['Z'],
   'И': ['I', '1'], 'Й': ['J'], 'К': ['K'], 'Л': ['L', '£'],
@@ -270,37 +247,77 @@ const map = {
   'Э': ['3', '€'], 'Ю': ['Ю'], 'Я': ['Я', '!']
 };
 
-const reverseMap = {};
-for (const letter in map) {
-  map[letter].forEach(v => { if (!reverseMap[v]) reverseMap[v] = letter; });
+const allBaseSymbols = new Set();
+Object.values(baseMap).forEach(variants => variants.forEach(v => allBaseSymbols.add(v)));
+const uniqueBaseSymbols = Array.from(allBaseSymbols);
+
+function seededShuffle(arr, seedStr) {
+  let seed = 0;
+  for (let i = 0; i < seedStr.length; i++) {
+    seed = (seed * 31 + seedStr.charCodeAt(i)) % 2147483647;
+  }
+  let shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    seed = (seed * 9301 + 49297) % 233280;
+    const j = Math.floor((seed / 233280) * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
-reverseMap['E'] = 'Е';
-reverseMap['9'] = 'Е';
 
+function getMapForKey(keyInput) {
+  const k = (keyInput || '').toUpperCase().trim();
+  let mapCopy = JSON.parse(JSON.stringify(baseMap));
 
-// ──────────────────────────────────────────────
-// 3. Пасхалки — специальные сообщения при вводе ключевых слов
-// ──────────────────────────────────────────────
-const easterEggs = {
-  keller: [
-    { keys: ["келлер", "keller"], message: "Связь с Командным центром невозможна, объект находится в гиперпространстве." },
-    { keys: ["махпелла", "mahpella", "mahпелла", "mahpelла"], message: "информация получена, маршрут в соседний рукав галактики откалиброван, активирован протокол сбора информации." }
-  ],
-  blazer: [
-    { keys: ["блазер", "blazer"], message: "Сигнал отправлен. Ожидайте прибытия флота ликвидации." }
-  ],
-  terron: [
-    { keys: ["террон", "terron"], message: "Запрос на ассимиляцию обрабатывается, ожидайте ответного протокола." }
-  ]
-};
+  if (k === 'RANGER' || k === '') {
+    if (mapCopy['Ё']) delete mapCopy['Ё'];
+    return mapCopy;
+  }
 
+  const shuffled = seededShuffle(uniqueBaseSymbols, k);
+  const substitution = {};
+  uniqueBaseSymbols.forEach((oldSym, i) => substitution[oldSym] = shuffled[i]);
 
-// ──────────────────────────────────────────────
-// 4. Функция шифрования
-// ──────────────────────────────────────────────
+  const modified = {};
+  for (let letter in mapCopy) {
+    modified[letter] = mapCopy[letter].map(old => substitution[old] || old);
+  }
+  if (modified['Ё']) delete modified['Ё'];
+  return modified;
+}
+
+function buildReverseMap(modMap) {
+  const rev = {};
+  for (const letter in modMap) {
+    modMap[letter].forEach(v => { if (!rev[v]) rev[v] = letter; });
+  }
+  return rev;
+}
+
+function getCipherConfig(keyInput) {
+  const m = getMapForKey(keyInput);
+  const r = buildReverseMap(m);
+  const multi = new Set(Object.keys(m).filter(l => m[l].length >= 2));
+  return { map: m, reverse: r, multi };
+}
+
+function isValidKey(key) {
+  const cleaned = (key || '').trim().toUpperCase();
+  if (cleaned === '' || cleaned === 'RANGER') return true;
+  return /^[A-Z]{6}$/.test(cleaned);
+}
+
 function doEncrypt() {
   const input = document.getElementById('input').value;
   if (!input) return;
+
+  const key = document.getElementById('cipherKey').value;
+  if (!isValidKey(key)) {
+    document.getElementById('output').value = "Неверный ключ шифрования. Попробуйте обновить Интерком или используйте другой ключ";
+    return;
+  }
+
+  const config = getCipherConfig(key);
 
   const tokens = input.split(/(\s+)/);
   const processed = tokens.map(token => {
@@ -309,7 +326,7 @@ function doEncrypt() {
     let word = token.toUpperCase();
     let punct = '';
 
-    const match = word.match(/([!?.:,;]+)$/);
+    const match = word.match(/([!?.:,;—]+)$/);
     if (match) {
       punct = '*';
       word = word.slice(0, -match[0].length);
@@ -318,29 +335,35 @@ function doEncrypt() {
     if (!/[А-ЯЁ]/.test(word)) return token;
 
     let encoded = '';
+    let alreadyDuplicated = false;
+
     for (let i = 0; i < word.length; i++) {
-      const char = word[i];
-      const variants = map[char] || [char];
-      encoded += variants[i % variants.length];
+      let char = word[i];
+      if (char === 'Ё') char = 'Е';
+
+      const variants = config.map[char] || [char];
+      const selected = variants[i % variants.length];
+
+      if (variants.length >= 2 && !alreadyDuplicated && Math.random() < 0.15) {
+        const repeats = Math.floor(Math.random() * 3) + 2;
+        for (let r = 0; r < repeats; r++) encoded += selected;
+        alreadyDuplicated = true;
+      } else {
+        encoded += selected;
+      }
     }
 
     encoded = encoded.split('').reverse().join('');
     return encoded + punct;
   });
 
-  const result = processed.join('');
-  document.getElementById('output').value = 'DOM-' + result + '-INTRUDER';
+  document.getElementById('output').value = 'DOM-' + processed.join('') + '-INTRUDER';
 }
 
-
-// ──────────────────────────────────────────────
-// 5. Функция расшифровки + обработка пасхалок и ошибок
-// ──────────────────────────────────────────────
 function doDecrypt() {
   const input = document.getElementById('input').value.trim();
   const lowerInput = input.toLowerCase();
 
-  // Сначала проверяем пасхалки для текущей темы
   const themeEggs = easterEggs[currentTheme] || [];
   for (const egg of themeEggs) {
     for (const key of egg.keys) {
@@ -351,13 +374,20 @@ function doDecrypt() {
     }
   }
 
-  // Если не пасхалка — обычная расшифровка
+  const key = document.getElementById('cipherKey').value;
+  if (!isValidKey(key)) {
+    document.getElementById('output').value = "Неверный ключ шифрования. Попробуйте обновить Интерком или используйте другой ключ";
+    return;
+  }
+
+  const config = getCipherConfig(key);
+
   if (!input.startsWith('DOM-') || !input.endsWith('-INTRUDER')) {
     document.getElementById('output').value = "Неверное шифрование. Пожалуйста, установите или обновите программу Интеркома";
     return;
   }
 
-  let cleaned = input.slice(4, input.length - '-INTRUDER'.length);
+  let cleaned = input.slice(4, -'-INTRUDER'.length);
 
   const tokens = cleaned.split(/(\s+)/);
   const processed = tokens.map(token => {
@@ -373,8 +403,17 @@ function doDecrypt() {
 
     const originalOrder = encWord.split('').reverse().join('');
     let decoded = '';
+    let prevEncChar = null;
+
     for (let char of originalOrder) {
-      decoded += reverseMap[char] || char;
+      const letter = config.reverse[char] || char;
+
+      if (prevEncChar === char && config.multi.has(letter)) {
+        continue;
+      }
+
+      decoded += letter;
+      prevEncChar = char;
     }
 
     return decoded + punct;
@@ -382,6 +421,98 @@ function doDecrypt() {
 
   document.getElementById('output').value = processed.join('');
 }
+
+function copyOutput() {
+  const output = document.getElementById('output');
+  if (!output.value) return;
+  navigator.clipboard.writeText(output.value);
+}
+
+function reverseOperation() {
+  const output = document.getElementById('output').value.trim();
+  if (!output) return;
+
+  document.getElementById('input').value = output;
+
+  if (output.startsWith('DOM-') && output.endsWith('-INTRUDER')) {
+    doDecrypt();
+  } else {
+    doEncrypt();
+  }
+}
+
+const easterEggs = {
+  keller: [
+    { keys: ["келлер", "keller"], message: "Связь с Командным центром невозможна, объект находится в гиперпространстве." },
+    { keys: ["махпелла", "mahpella", "клиссаны", "klissan"], message: "информация получена, маршрут в соседний рукав галактики откалиброван, активирован протокол сбора информации." }
+  ],
+  blazer: [
+    { keys: ["блазер", "blazer"], message: "Сигнал отправлен. Ожидайте прибытия флота ликвидации." }
+  ],
+  terron: [
+    { keys: ["террон", "terron"], message: "Запрос на ассимиляцию обрабатывается, ожидайте ответного протокола." }
+  ]
+};
+
+const exampleText = "Когда летишь в бездонной черноте космоса, утыканной сиянием далеких звезд в свете протуберанцев может открыться истина — это и есть вечность";
+
+const keys = ["Ranger", "Keller", "Blazer", "Terron", "Galaxy", "Quasar", "Pulsar"];
+
+window.addEventListener('load', () => {
+  const tbody = document.getElementById('examplesBody');
+
+  const trOriginal = document.createElement('tr');
+  trOriginal.innerHTML = `<td class="original">Origin</td><td class="original">${exampleText}</td>`;
+  tbody.appendChild(trOriginal);
+
+  keys.forEach(key => {
+    const config = getCipherConfig(key);
+
+    let encoded = '';
+    const tokens = exampleText.split(/(\s+)/);
+    const processed = tokens.map(token => {
+      if (/^\s+$/.test(token)) return token;
+
+      let word = token.toUpperCase();
+      let punct = '';
+
+      const match = word.match(/([!?.:,;—]+)$/);
+      if (match) {
+        punct = '*';
+        word = word.slice(0, -match[0].length);
+      }
+
+      if (!/[А-ЯЁ]/.test(word)) return token;
+
+      let part = '';
+      let alreadyDuplicated = false;
+
+      for (let i = 0; i < word.length; i++) {
+        let char = word[i];
+        if (char === 'Ё') char = 'Е';
+        const variants = config.map[char] || [char];
+        const selected = variants[i % variants.length];
+
+        if (variants.length >= 2 && !alreadyDuplicated && Math.random() < 0.15) {
+          const repeats = Math.floor(Math.random() * 3) + 2;
+          for (let r = 0; r < repeats; r++) part += selected;
+          alreadyDuplicated = true;
+        } else {
+          part += selected;
+        }
+      }
+
+      part = part.split('').reverse().join('');
+      return part + punct;
+    });
+
+    encoded = 'DOM-' + processed.join('') + '-INTRUDER';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${key}</td><td style="word-break: break-all;">${encoded}</td>`;
+    tbody.appendChild(tr);
+  });
+});
 </script>
 
 </body>
